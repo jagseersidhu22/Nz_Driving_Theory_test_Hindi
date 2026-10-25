@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NZ Driving Theory Practice (Hindi)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one centred column, a road-line progress strip on top, one question card at a time, numbered navigator below. */
+:root{
+  --bg:#eceff1; --surface:#ffffff; --ink:#13222b; --muted:#566872; --line:#d3dade;
+  --accent:#0b5d4b; --accent-ink:#ffffff; --sign:#f5b700; --good:#1c7a3c; --good-bg:#e1f3e6; --bad:#b3261e; --bad-bg:#fbe7e5;
+  --font-display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --font-body:"Noto Sans Devanagari","Barlow",system-ui,sans-serif;
+  --font-latin:"Barlow",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e191f; --surface:#16252d; --ink:#e7eef1; --muted:#9aabb4; --line:#2a3d47;
+  --accent:#4cc3a0; --accent-ink:#06231b; --sign:#f5b700; --good:#5fd283; --good-bg:#16372230; --bad:#ff8a80; --bad-bg:#40191a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e191f; --surface:#16252d; --ink:#e7eef1; --muted:#9aabb4; --line:#2a3d47;
+  --accent:#4cc3a0; --accent-ink:#06231b; --sign:#f5b700; --good:#5fd283; --good-bg:#16372230; --bad:#ff8a80; --bad-bg:#40191a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.55;
+  padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.en{font-family:var(--font-latin);color:var(--muted);font-size:.86em;line-height:1.4;display:block;margin-top:2px}
+body.noen .en{display:none}
+h1,h2{font-family:var(--font-display);font-weight:700;letter-spacing:.01em;margin:0;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--sign);outline-offset:2px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 16px;font-weight:600;min-height:44px}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.toggle{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.toggle input{width:18px;height:18px;accent-color:var(--accent)}
+
+/* start screen */
+.hero{display:flex;flex-direction:column;gap:12px}
+.hero h1{font-size:clamp(2rem,7vw,3rem);line-height:1.05}
+.hero .sub{color:var(--muted);margin:0}
+.centerline{height:6px;background:repeating-linear-gradient(90deg,var(--sign) 0 28px,transparent 28px 48px);border-radius:3px}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.mode{text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:4px}
+.mode:hover{border-color:var(--accent)}
+.mode strong{font-family:var(--font-display);font-size:1.5rem;font-weight:700;line-height:1.1}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.facts li{border-top:3px solid var(--sign);padding-top:8px}
+.facts b{font-family:var(--font-display);font-size:1.8rem;display:block;line-height:1}
+.note{font-size:.88rem;color:var(--muted);margin:0}
+
+/* quiz */
+.strip{display:flex;gap:3px}
+.strip i{flex:1;height:6px;border-radius:2px;background:var(--line)}
+.strip i.done{background:var(--accent)}
+.strip i.cur{background:var(--sign)}
+.qmeta{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;font-family:var(--font-display);font-size:1.15rem;font-weight:600;letter-spacing:.03em;color:var(--muted)}
+.tag{font-family:var(--font-body);font-size:.8rem;border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+.q{font-size:1.22rem;font-weight:600;line-height:1.5;margin:0}
+.opts{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.opt{width:100%;text-align:left;display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--line);background:var(--surface);border-radius:8px;padding:12px 14px;min-height:48px}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt .k{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-family:var(--font-display);font-weight:700;font-size:1rem}
+.opt.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.opt.sel .k{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.opt.ok{border-color:var(--good);background:var(--good-bg)}
+.opt.ok .k{background:var(--good);color:var(--bg);border-color:var(--good)}
+.opt.no{border-color:var(--bad);background:var(--bad-bg)}
+.opt.no .k{background:var(--bad);color:var(--bg);border-color:var(--bad)}
+.opt:disabled{cursor:default;color:inherit}
+.expl{border-left:4px solid var(--sign);padding:8px 12px;background:color-mix(in srgb,var(--sign) 12%,var(--surface));border-radius:0 8px 8px 0}
+.nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px}
+.gb{min-height:40px;border:1.5px solid var(--line);background:var(--surface);border-radius:6px;font-family:var(--font-display);font-weight:600;font-size:1.05rem}
+.gb.ans{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.gb.skip{border-style:dashed;border-color:var(--sign)}
+.gb.cur{outline:3px solid var(--sign);outline-offset:1px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}
+.confirm{border:1.5px solid var(--sign);border-radius:10px;padding:16px;background:color-mix(in srgb,var(--sign) 12%,var(--surface));display:flex;flex-direction:column;gap:10px}
+
+/* results */
+.verdict{display:flex;flex-direction:column;gap:6px}
+.stamp{align-self:flex-start;font-family:var(--font-display);font-weight:700;font-size:1.6rem;letter-spacing:.06em;padding:2px 14px;border:3px solid currentColor;border-radius:6px;transform:rotate(-2deg)}
+.stamp.pass{color:var(--good)} .stamp.fail{color:var(--bad)}
+.score{font-family:var(--font-display);font-size:4rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.score small{font-size:1.6rem;color:var(--muted)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.stats div{border:1px solid var(--line);border-radius:8px;padding:10px 4px}
+.stats b{font-family:var(--font-display);font-size:1.8rem;display:block;line-height:1;font-variant-numeric:tabular-nums}
+.topics{display:flex;flex-direction:column;gap:8px}
+.tp{display:grid;grid-template-columns:minmax(90px,150px) 1fr auto;gap:10px;align-items:center;font-size:.92rem}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.tp span:last-child{font-variant-numeric:tabular-nums;color:var(--muted)}
+.rev{display:flex;flex-direction:column;gap:14px}
+.ri{border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:6px;background:var(--surface)}
+.ri .st{font-family:var(--font-display);font-weight:700;letter-spacing:.05em}
+.ri .st.w{color:var(--bad)} .ri .st.s{color:var(--muted)}
+.ri p{margin:0}
+.you{color:var(--bad)} .right{color:var(--good)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs .btn[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+</style>
+
+<style>html{color-scheme:light}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<script>
+/* ---------- Question bank ---------- */
+/* Each option is either a plain string (numbers/units) or [Hindi, English]. a = index of correct option. */
+var BANK=[
+{t:"नियम",te:"Rules",q:["न्यूज़ीलैंड में गाड़ी सड़क के किस ओर चलाई जाती है?","Which side of the road do you drive on in New Zealand?"],o:[["बाईं ओर","Left"],["दाईं ओर","Right"],["जहाँ जगह मिले","Wherever there is space"],["सड़क के बीच में","The middle of the road"]],a:0,e:["न्यूज़ीलैंड में हमेशा सड़क के बाईं ओर चलें।","Always keep left in New Zealand."]},
+{t:"गति",te:"Speed",q:["खुली सड़क (open road) पर अधिकतम डिफ़ॉल्ट गति सीमा कितनी है?","What is the default maximum speed limit on the open road?"],o:["80 km/h","90 km/h","100 km/h","110 km/h"],a:2,e:["जब तक अलग बोर्ड न हो, खुली सड़क पर सीमा 100 km/h है।","Unless a sign says otherwise, the open road limit is 100 km/h."]},
+{t:"गति",te:"Speed",q:["शहरी इलाक़े (urban area) में डिफ़ॉल्ट गति सीमा कितनी है?","What is the default speed limit in an urban area?"],o:["40 km/h","50 km/h","60 km/h","70 km/h"],a:1,e:["शहरी इलाक़े में डिफ़ॉल्ट सीमा 50 km/h है।","The default urban limit is 50 km/h."]},
+{t:"गति",te:"Speed",q:["जब स्कूल बस फ़्लैशिंग लाइट के साथ रुकी हो, तो उसके पास से गुज़रते समय अधिकतम गति कितनी होनी चाहिए?","What is the maximum speed when passing a stopped school bus that has flashing lights on?"],o:["20 km/h","30 km/h","50 km/h","10 km/h"],a:0,e:["बस के दोनों ओर से गुज़रते समय 20 km/h से ज़्यादा न चलें।","Do not exceed 20 km/h when passing it, from either direction."]},
+{t:"सुरक्षा",te:"Safety",q:["20 साल से कम उम्र के ड्राइवर के लिए शराब की कानूनी सीमा क्या है?","What is the legal alcohol limit for a driver under 20 years old?"],o:[["शून्य (ज़ीरो)","Zero"],["50 mg प्रति 100 ml रक्त","50 mg per 100 ml of blood"],["250 mcg प्रति लीटर साँस","250 mcg per litre of breath"],["थोड़ी मात्रा चलती है","A small amount is allowed"]],a:0,e:["20 साल से कम उम्र के लिए शराब की सीमा शून्य है।","Under-20 drivers have a zero alcohol limit."]},
+{t:"सुरक्षा",te:"Safety",q:["20 साल या उससे ज़्यादा उम्र के ड्राइवर के लिए साँस में शराब की सीमा क्या है?","What is the breath alcohol limit for a driver aged 20 or over?"],o:["250 mcg / litre","400 mcg / litre","500 mcg / litre","0 mcg / litre"],a:0,e:["सीमा 250 माइक्रोग्राम प्रति लीटर साँस (या 50 mg प्रति 100 ml रक्त) है। सबसे सुरक्षित: पीकर गाड़ी न चलाएँ।","The limit is 250 micrograms per litre of breath (or 50 mg per 100 ml of blood). Safest choice: don't drink and drive."]},
+{t:"नियम",te:"Rules",q:["बिना किसी साइन या सिग्नल वाले चौराहे पर आपको किसे रास्ता देना है?","At an intersection with no signs or signals, who must you give way to?"],o:[["अपनी दाईं ओर से आने वाले वाहनों को","Vehicles coming from your right"],["अपनी बाईं ओर से आने वाले वाहनों को","Vehicles coming from your left"],["सबसे बड़े वाहन को","The biggest vehicle"],["जो पहले हॉर्न बजाए","Whoever honks first"]],a:0,e:["डिफ़ॉल्ट नियम: दाईं ओर से आने वालों को रास्ता दें। (अपवाद: T-चौराहे पर ख़त्म होने वाली सड़क वाले को रास्ता देना होता है, और मुड़ने वाले सीधे जाने वालों को रास्ता देते हैं।)","Default rule: give way to your right. (Exceptions: on a T-intersection the terminating road gives way, and turning vehicles give way to those not turning.)"]},
+{t:"नियम",te:"Rules",q:["आप चौराहे पर दाएँ मुड़ना चाहते हैं और सामने से आने वाला वाहन सीधा जा रहा है। कौन रास्ता देगा?","You are turning right at an intersection and an oncoming vehicle is going straight. Who gives way?"],o:[["आप (दाएँ मुड़ने वाले)","You, the right-turner"],["सीधा जाने वाला वाहन","The vehicle going straight"],["दोनों रुकें","Both stop"],["बड़ा वाहन","The bigger vehicle"]],a:0,e:["दाएँ मुड़ने वाला वाहन सीधा या बाएँ जाने वाले सामने के वाहन को रास्ता देता है।","The right-turning vehicle gives way to oncoming traffic going straight or turning left."]},
+{t:"नियम",te:"Rules",q:["आप चौराहे पर बाएँ मुड़ रहे हैं और सामने वाला वाहन दाएँ मुड़ रहा है। कौन रास्ता देगा?","You are turning left and the oncoming vehicle is turning right. Who gives way?"],o:[["दाएँ मुड़ने वाला वाहन","The right-turning vehicle"],["आप (बाएँ मुड़ने वाले)","You, the left-turner"],["जो पहले पहुँचे","Whoever arrives first"],["कोई नहीं","Nobody"]],a:0,e:["दाएँ मुड़ने वाला वाहन बाएँ मुड़ने वाले को रास्ता देता है।","The right-turner gives way to the left-turner."]},
+{t:"नियम",te:"Rules",q:["राउंडअबाउट (गोल चक्कर) पर आपको किसे रास्ता देना है?","At a roundabout, who must you give way to?"],o:[["अपनी दाईं ओर से आने वाले ट्रैफ़िक को","Traffic coming from your right"],["अपनी बाईं ओर से आने वाले ट्रैफ़िक को","Traffic coming from your left"],["किसी को नहीं","Nobody"],["सिर्फ़ बड़े वाहनों को","Only large vehicles"]],a:0,e:["राउंडअबाउट पर दाईं ओर से आने वाले ट्रैफ़िक को रास्ता दें।","Give way to traffic from your right at a roundabout."]},
+{t:"नियम",te:"Rules",q:["राउंडअबाउट से बाहर निकलते समय आपको क्या करना चाहिए?","What should you do when leaving a roundabout?"],o:[["बाएँ का इंडिकेटर दें","Signal left"],["दाएँ का इंडिकेटर दें","Signal right"],["हॉर्न बजाएँ","Sound the horn"],["हैज़र्ड लाइट चालू करें","Turn on hazard lights"]],a:0,e:["बाहर निकलते समय बाएँ का इंडिकेटर दें ताकि दूसरों को पता चले।","Signal left as you exit so others know your intention."]},
+{t:"चिह्न",te:"Signs",q:["STOP साइन पर आपको क्या करना चाहिए?","What must you do at a STOP sign?"],o:[["पूरी तरह रुकें और सभी ट्रैफ़िक को रास्ता दें","Stop completely and give way to all traffic"],["धीमे हों और अगर रास्ता खाली हो तो चलें","Slow down and go if clear"],["सिर्फ़ दाईं ओर देखें","Only look right"],["हॉर्न बजाकर आगे बढ़ें","Honk and proceed"]],a:0,e:["स्टॉप लाइन पर पूरी तरह रुकें और सारे ट्रैफ़िक को रास्ता दें।","Stop at the line and give way to all traffic."]},
+{t:"चिह्न",te:"Signs",q:["लाल किनारे वाला उल्टा त्रिकोण साइन क्या बताता है?","What does a red-bordered, downward-pointing triangle sign mean?"],o:[["Give Way (रास्ता दें)","Give Way"],["Stop (रुकें)","Stop"],["पार्किंग","Parking"],["गति सीमा","Speed limit"]],a:0,e:["यह Give Way साइन है; दूसरे ट्रैफ़िक को रास्ता दें।","This is a Give Way sign."]},
+{t:"चिह्न",te:"Signs",q:["पीले हीरे (diamond) आकार का साइन आमतौर पर क्या दर्शाता है?","What does a yellow diamond-shaped sign usually show?"],o:[["आगे ख़तरे की चेतावनी","A warning of a hazard ahead"],["गति सीमा","A speed limit"],["पार्किंग की जगह","A parking area"],["रास्ता बंद है","The road is closed"]],a:0,e:["पीले हीरे वाले साइन आगे के ख़तरे या बदलाव की चेतावनी देते हैं।","Yellow diamond signs warn of hazards or changes ahead."]},
+{t:"चिह्न",te:"Signs",q:["लाल गोल घेरे में लिखी संख्या (जैसे 60) का क्या मतलब है?","What does a number inside a red circle (for example 60) mean?"],o:[["अधिकतम गति सीमा","The maximum speed limit"],["न्यूनतम गति","The minimum speed"],["आगे की दूरी","Distance ahead"],["सड़क का नंबर","The road number"]],a:0,e:["यह उस जगह की अधिकतम गति सीमा (km/h) बताता है।","It shows the maximum speed limit in km/h."]},
+{t:"सुरक्षा",te:"Safety",q:["अच्छे मौसम और सूखी सड़क पर अगली गाड़ी से कम से कम कितने सेकंड की दूरी रखनी चाहिए?","In good conditions, what is the minimum following distance behind the vehicle ahead?"],o:["1 सेकंड / 1 second","2 सेकंड / 2 seconds","5 सेकंड / 5 seconds","10 सेकंड / 10 seconds"],a:1,e:["कम से कम 2 सेकंड की दूरी रखें।","Keep at least a 2-second gap."]},
+{t:"सुरक्षा",te:"Safety",q:["गीली सड़क पर या ख़राब मौसम में अगली गाड़ी से दूरी कितनी रखें?","On a wet road or in bad weather, how much following distance should you keep?"],o:["2 सेकंड / 2 seconds","3 सेकंड / 3 seconds","कम से कम 4 सेकंड / at least 4 seconds","1 सेकंड / 1 second"],a:2,e:["गीली सड़क पर रुकने में ज़्यादा दूरी लगती है, इसलिए 4 सेकंड या ज़्यादा।","Stopping takes longer on wet roads, so keep 4 seconds or more."]},
+{t:"नियम",te:"Rules",q:["मुड़ने से कम से कम कितने सेकंड पहले इंडिकेटर देना चाहिए?","How long before turning should you signal?"],o:["1 सेकंड / 1 second","कम से कम 3 सेकंड / at least 3 seconds","मुड़ने के बाद / after turning","ज़रूरी नहीं / not needed"],a:1,e:["मुड़ने या लेन बदलने से पहले कम से कम 3 सेकंड इंडिकेटर दें।","Signal for at least 3 seconds before turning or changing lanes."]},
+{t:"सुरक्षा",te:"Safety",q:["गाड़ी चलाते समय हाथ में मोबाइल फ़ोन पकड़कर इस्तेमाल करना:","Using a hand-held mobile phone while driving is:"],o:[["गैरकानूनी है","Illegal"],["बस कॉल पर ठीक है","Fine for calls"],["धीमी गति पर ठीक है","Fine at low speed"],["सिर्फ़ रात में गैरकानूनी","Illegal only at night"]],a:0,e:["गाड़ी चलाते समय फ़ोन पकड़कर इस्तेमाल करना गैरकानूनी है और ख़तरनाक भी।","Holding and using a phone while driving is illegal and dangerous."]},
+{t:"सुरक्षा",te:"Safety",q:["गाड़ी में 15 साल से कम उम्र के यात्रियों के सीट बेल्ट लगाने की ज़िम्मेदारी किसकी है?","Who is responsible for passengers under 15 wearing seatbelts?"],o:[["ड्राइवर","The driver"],["यात्री ख़ुद","The passengers themselves"],["अभिभावक सिर्फ़","Only a parent"],["किसी की नहीं","Nobody"]],a:0,e:["15 साल से कम उम्र के यात्रियों के लिए ड्राइवर ज़िम्मेदार है।","The driver is responsible for passengers under 15."]},
+{t:"सुरक्षा",te:"Safety",q:["बच्चों के लिए चाइल्ड रिस्ट्रेंट (child restraint) कम से कम किस उम्र तक ज़रूरी है?","Until what age must children use an approved child restraint?"],o:["3 साल / 3 years","5 साल / 5 years","7वें जन्मदिन तक / until their 7th birthday","12 साल / 12 years"],a:2,e:["7वें जन्मदिन तक मान्य चाइल्ड रिस्ट्रेंट ज़रूरी है। 148 cm तक इसे इस्तेमाल करना बेहतर है।","Required until the 7th birthday; using one until about 148 cm tall is recommended."]},
+{t:"नियम",te:"Rules",q:["ज़ेब्रा क्रॉसिंग पर पैदल यात्री सड़क पार कर रहा है। आपको क्या करना है?","A pedestrian is crossing on a zebra crossing. What must you do?"],o:[["रुकें और रास्ता दें","Stop and give way"],["हॉर्न बजाकर निकल जाएँ","Honk and pass"],["तेज़ी से निकल जाएँ","Speed up and go"],["धीमे चलकर आगे बढ़ें","Creep past slowly"]],a:0,e:["पैदल यात्री के क्रॉसिंग पर होते समय रुकना और रास्ता देना ज़रूरी है।","You must stop and give way to pedestrians on a crossing."]},
+{t:"पार्किंग",te:"Parking",q:["सड़क के किनारे टूटी (broken) पीली रेखा का क्या मतलब है?","What does a broken yellow line along the edge of the road mean?"],o:[["यहाँ रुकना और पार्क करना मना है","No stopping or parking"],["यहाँ पार्क करना ठीक है","Parking is allowed"],["सिर्फ़ बसों के लिए","Buses only"],["केवल रविवार को पार्किंग","Parking on Sundays only"]],a:0,e:["NZTA के अनुसार जहाँ पीली रेखाएँ हैं वहाँ आप रुक या पार्क नहीं कर सकते।","NZTA says you can't stop or park where yellow lines are painted."]},
+{t:"नियम",te:"Rules",q:["आपकी तरफ़ की बीच वाली लाइन ठोस (solid) पीली है। इसका मतलब:","The centre line on your side is solid yellow. This means:"],o:[["आप ओवरटेक नहीं कर सकते / लाइन पार नहीं कर सकते","You must not overtake or cross it"],["ओवरटेक कर सकते हैं","You may overtake"],["सिर्फ़ धीमे वाहन को ओवरटेक करें","Overtake slow vehicles only"],["रात में पार कर सकते हैं","You may cross at night"]],a:0,e:["अपनी तरफ़ ठोस पीली लाइन हो तो ओवरटेक न करें।","Do not overtake when there is a solid yellow line on your side."]},
+{t:"पार्किंग",te:"Parking",q:["चौराहे (intersection) के कितने मीटर के भीतर पार्क नहीं करना चाहिए?","Within how many metres of an intersection must you not park?"],o:["1 m","3 m","6 m","15 m"],a:2,e:["चौराहे से 6 मीटर के भीतर पार्क न करें, ताकि दृश्यता बनी रहे।","Do not park within 6 metres of an intersection so that visibility is kept clear."]},
+{t:"सुरक्षा",te:"Safety",q:["हेडलाइट कब चालू करना ज़रूरी है?","When must you turn your vehicle headlights on?"],o:[["ऊपर की सभी स्थितियों में: सूर्यास्त के 30 मिनट बाद से सूर्योदय के 30 मिनट पहले तक, कोहरे में, या जब 100 m आगे व्यक्ति/वाहन न दिखे","In all of these: 30 min after sunset to 30 min before sunrise, in fog, or when you can't see a person or vehicle 100 m ahead"],["सिर्फ़ रात 12 बजे के बाद","Only after midnight"],["सिर्फ़ बारिश में","Only in rain"],["कभी नहीं","Never"]],a:0,e:["रात में, कोहरे में और कम दृश्यता (100 m से कम) में हेडलाइट ज़रूरी है।","Headlights are required at night, in fog, and when you can't see 100 m ahead."]},
+{t:"सुरक्षा",te:"Safety",q:["थकान से बचने के लिए लंबी ड्राइव में कितने समय बाद ब्रेक लेना चाहिए?","On a long drive, how often should you take a break to avoid fatigue?"],o:["हर 2 घंटे में / every 2 hours","हर 6 घंटे में / every 6 hours","सिर्फ़ जब नींद आए / only when sleepy","ज़रूरत नहीं / not needed"],a:0,e:["कम से कम हर 2 घंटे में रुककर आराम करें।","Stop and rest at least every 2 hours."]},
+{t:"नियम",te:"Rules",q:["सायरन और फ़्लैशिंग लाइट वाली इमरजेंसी गाड़ी पीछे से आ रही है। आप क्या करें?","An emergency vehicle with siren and flashing lights is coming from behind. What do you do?"],o:[["सुरक्षित रूप से बाईं ओर रुककर रास्ता दें","Pull over safely to the left and give way"],["तेज़ी से आगे भागें","Speed up"],["बीच सड़क पर रुकें","Stop in the middle of the road"],["ध्यान न दें","Ignore it"]],a:0,e:["सुरक्षित तरीक़े से बाईं ओर होकर रास्ता दें, ज़रूरत हो तो रुकें।","Move left safely and stop if needed to let it pass."]},
+{t:"नियम",te:"Rules",q:["रेलवे क्रॉसिंग पर लाल बत्तियाँ फ़्लैश हो रही हैं। आपको क्या करना है?","The red lights at a railway crossing are flashing. What must you do?"],o:[["रुकें और तब तक इंतज़ार करें जब तक बत्तियाँ बंद न हों","Stop and wait until the lights stop flashing"],["धीमे होकर पार करें","Slow down and cross"],["ट्रेन दिखे नहीं तो पार करें","Cross if you can't see a train"],["हॉर्न बजाकर पार करें","Honk and cross"]],a:0,e:["फ़्लैशिंग लाल बत्ती पर रुकना ज़रूरी है।","You must stop for flashing red lights."]},
+{t:"नियम",te:"Rules",q:["ट्रैफ़िक लाइट पीली हो गई। जब आप स्टॉप लाइन के पास पहुँचें तो आपको क्या करना चाहिए?","The traffic light turns yellow as you approach the stop line. What should you do?"],o:[["अगर सुरक्षित रूप से रुक सकते हैं तो रुकें","Stop if you can do so safely"],["तेज़ी से निकल जाएँ","Speed up to get through"],["हमेशा रुक जाएँ चाहे कुछ भी हो","Always slam on the brakes"],["हॉर्न बजाएँ","Sound the horn"]],a:0,e:["पीली बत्ती का मतलब है रुकें, बशर्ते सुरक्षित रूप से रुक सकें।","Yellow means stop, unless it is unsafe to do so."]},
+{t:"नियम",te:"Rules",q:["लाल बत्ती पर क्या आप बाएँ मुड़ सकते हैं?","Can you turn left at a red light?"],o:[["नहीं, जब तक कोई साइन या एरो इजाज़त न दे","No, unless a sign or arrow allows it"],["हाँ, हमेशा","Yes, always"],["हाँ, अगर कोई न आ रहा हो","Yes, if the road is clear"],["हाँ, रात में","Yes, at night"]],a:0,e:["NZ में लाल बत्ती पर रुकना होता है; बाएँ मुड़ना तभी जब साइन या एरो अनुमति दे।","In NZ you must stop at a red light; turning is allowed only if a sign or arrow permits it."]},
+{t:"नियम",te:"Rules",q:["जिप मर्ज (zip merge) में दो लेन एक में मिलती हैं। सही तरीक़ा क्या है?","When two lanes merge into one (zip merge), what is the correct way to do it?"],o:[["बारी-बारी से एक-एक वाहन जाने दें","Take turns, one vehicle from each lane"],["तेज़ वाहन पहले जाएँ","Faster vehicles go first"],["बाईं लेन वाले पहले","The left lane goes first"],["जो पहले हॉर्न बजाए","Whoever honks first"]],a:0,e:["जिप मर्ज में हर लेन से बारी-बारी से एक वाहन आगे बढ़ता है।","Vehicles take turns, one from each lane."]},
+{t:"सुरक्षा",te:"Safety",q:["साइकिल सवार को ओवरटेक करते समय, अगर संभव हो तो, उसके और आपके बीच कम से कम कितनी जगह छोड़नी चाहिए?","When passing a cyclist, how much space should you leave between you and the cyclist if you can?"],o:["50 cm","1 m","1.5 m","5 m"],a:2,e:["Road Code के अनुसार अगर संभव हो तो कम से कम 1.5 मीटर जगह छोड़ें। सड़क संकरी हो तो सुरक्षित जगह मिलने तक रुकें।","The Road Code says to allow at least 1.5 metres if you can. On a narrow road, wait for a safe gap."]},
+{t:"नियम",te:"Rules",q:["खुली सड़क पर एक ही दिशा में दो लेन हों, तो दाईं लेन का इस्तेमाल कब करें?","On a road with two lanes in your direction, when should you use the right-hand lane?"],o:[["सिर्फ़ ओवरटेक करने या दाएँ मुड़ने के लिए","Only to overtake or turn right"],["हमेशा","Always"],["जब जल्दी हो","When in a hurry"],["जब बाईं लेन में धीमी गाड़ी हो","Whenever the left is slower"]],a:0,e:["सामान्यतः बाईं लेन में चलें; दाईं लेन ओवरटेक के लिए है।","Keep left normally; use the right lane to overtake."]},
+{t:"ख़तरे",te:"Hazards",q:["गीली सड़क पर गाड़ी पानी पर फिसलने (aquaplaning) लगे तो क्या करें?","Your car starts aquaplaning on a wet road. What should you do?"],o:[["एक्सीलरेटर से पैर हटाएँ, ज़ोर से ब्रेक या स्टीयरिंग न घुमाएँ","Ease off the accelerator; avoid hard braking or sharp steering"],["ज़ोर से ब्रेक लगाएँ","Brake hard"],["तेज़ी से स्टीयरिंग घुमाएँ","Swerve sharply"],["गति बढ़ाएँ","Speed up"]],a:0,e:["धीरे से एक्सीलरेटर छोड़ें और स्टीयरिंग सीधा रखें।","Ease off gently and keep the steering straight."]},
+{t:"सुरक्षा",te:"Safety",q:["दुर्घटना होने पर और किसी के घायल होने पर पहला क़दम क्या है?","After a crash where someone may be injured, what should you do first?"],o:[["रुकें, सुरक्षा देखें और ज़रूरत हो तो 111 पर कॉल करें","Stop, check safety and call 111 if needed"],["मौक़े से निकल जाएँ","Leave the scene"],["सिर्फ़ फ़ोटो लें","Only take photos"],["घर जाकर रिपोर्ट करें","Report it from home"]],a:0,e:["रुकना, मदद करना और ज़रूरत पर 111 पर कॉल करना ज़रूरी है। अपनी जानकारी भी दें।","You must stop, help, call 111 if needed, and give your details."]},
+{t:"लाइसेंस",te:"Licence",q:["Restricted लाइसेंस वाला ड्राइवर बिना सुपरवाइज़र के किस समय गाड़ी नहीं चला सकता?","During which hours can a restricted licence holder not drive without a supervisor?"],o:["रात 10 बजे से सुबह 5 बजे तक / 10pm to 5am","दोपहर 12 से 2 बजे / 12pm to 2pm","सुबह 5 से 9 बजे / 5am to 9am","कोई पाबंदी नहीं / no restriction"],a:0,e:["Restricted लाइसेंस पर रात 10 बजे से सुबह 5 बजे तक सुपरवाइज़र चाहिए।","Between 10pm and 5am a supervisor is required."]},
+{t:"लाइसेंस",te:"Licence",q:["लर्नर (learner) लाइसेंस पर गाड़ी चलाते समय आपके साथ कौन होना चाहिए?","Who must supervise you while you drive on a learner licence?"],o:[["कम से कम 2 साल से फ़ुल लाइसेंस रखने वाला सुपरवाइज़र","A supervisor who has held a full licence for at least 2 years"],["कोई भी दोस्त","Any friend"],["कोई ज़रूरत नहीं","No one"],["कोई भी बच्चा","Any child"]],a:0,e:["सुपरवाइज़र के पास कम से कम 2 साल से फ़ुल लाइसेंस होना चाहिए।","The supervisor needs a full licence held for at least 2 years."]},
+{t:"लाइसेंस",te:"Licence",q:["कार का लर्नर लाइसेंस लेने की न्यूनतम उम्र क्या है?","What is the minimum age to get a car learner licence?"],o:["14 साल / 14","15 साल / 15","16 साल / 16","18 साल / 18"],a:2,e:["न्यूज़ीलैंड में कार लर्नर लाइसेंस के लिए न्यूनतम उम्र 16 साल है।","The minimum age is 16."]},
+{t:"सुरक्षा",te:"Safety",q:["गाड़ी के टायर की न्यूनतम क़ानूनी ट्रेड गहराई कितनी है?","What is the minimum legal tread depth for car tyres?"],o:["0.5 mm","1.0 mm","1.5 mm","3.0 mm"],a:2,e:["ट्रेड कम से कम 1.5 mm होना चाहिए।","Tread must be at least 1.5 mm."]},
+{t:"नियम",te:"Rules",q:["सड़क पर चलने के लिए गाड़ी में क्या ज़रूरी है?","What does a vehicle need to be legally on the road?"],o:[["वैध WOF/CoF और रजिस्ट्रेशन (rego)","A current WOF/CoF and registration"],["सिर्फ़ बीमा","Insurance only"],["सिर्फ़ नंबर प्लेट","Only a number plate"],["कुछ नहीं","Nothing"]],a:0,e:["गाड़ी की वैध फ़िटनेस (WOF) और रजिस्ट्रेशन ज़रूरी है।","The vehicle needs a current Warrant of Fitness and registration."]},
+{t:"सुरक्षा",te:"Safety",q:["लेन बदलने से पहले ब्लाइंड स्पॉट के लिए क्या करना चाहिए?","Before changing lanes, what should you do about your blind spot?"],o:[["कंधे के ऊपर से देखें","Check over your shoulder"],["सिर्फ़ शीशे में देखें","Only use mirrors"],["सिर्फ़ हॉर्न बजाएँ","Only honk"],["अंदाज़े से बदलें","Guess"]],a:0,e:["शीशे के साथ कंधे के ऊपर से भी देखें।","Use your mirrors and also look over your shoulder."]},
+{t:"नियम",te:"Rules",q:["निम्न में से किस जगह ओवरटेक नहीं करना चाहिए?","Where should you not overtake?"],o:[["अंधे मोड़, चौराहे या क्रॉसिंग के पास","Near blind corners, intersections or crossings"],["सीधी खाली सड़क पर","On a clear, straight road"],["मोटरवे पर","On a motorway"],["दिन में हर जगह","Anywhere in daytime"]],a:0,e:["जहाँ आगे साफ़ न दिखे या चौराहा/क्रॉसिंग हो वहाँ ओवरटेक न करें।","Do not overtake where you cannot see far enough ahead or near intersections and crossings."]},
+{t:"पार्किंग",te:"Parking",q:["ढलान पर नीचे की ओर मुँह करके पार्क करते समय पहिए किस ओर मोड़ें?","When parking facing downhill, which way should you turn the wheels?"],o:[["फुटपाथ/कर्ब की ओर","Towards the kerb"],["सड़क की ओर","Towards the road"],["सीधे रखें","Straight"],["कोई फ़र्क़ नहीं","It doesn't matter"]],a:0,e:["पहिए कर्ब की ओर रखें ताकि गाड़ी लुढ़के तो कर्ब रोक ले।","Turn the wheels to the kerb so it stops the car if it rolls."]},
+{t:"नियम",te:"Rules",q:["अगर पीछे वाला वाहन आपको ओवरटेक करना चाहता है, तो आपको क्या करना चाहिए?","What should you do if the vehicle behind you wishes to pass?"],o:[["बाईं ओर हटकर उसे निकलने दें","Pull to the left to let it pass"],["गति बढ़ा दें ताकि वह रुका न रहे","Speed up so you don't hold it up"],["अपनी जगह पर डटे रहें","Hold your line"],["धीमे हों और दाएँ का इंडिकेटर दें","Slow down and signal right"]],a:0,e:["सुरक्षित होने पर बाईं ओर हटकर पीछे वाले को रास्ता दें।","Move left and give the driver behind room to pass when it is safe."]},
+{t:"नियम",te:"Rules",q:["आप किसी साइड रोड में मुड़ रहे हैं और पैदल यात्री उसे पार कर रहे हैं। आपको क्या करना है?","You are turning into a side road and pedestrians are crossing it. What must you do?"],o:[["उन्हें रास्ता दें","Give way to them"],["तेज़ी से निकल जाएँ","Go quickly past them"],["हॉर्न बजाएँ","Sound the horn"],["उनके आगे से घुमाएँ","Cut in front"]],a:0,e:["जिस सड़क में आप मुड़ रहे हैं उसे पार करते पैदल यात्रियों को रास्ता दें।","Give way to pedestrians crossing the road you are turning into."]},
+{t:"सुरक्षा",te:"Safety",q:["निम्न में से कौन-सी चीज़ गाड़ी चलाने की क्षमता को ख़राब कर सकती है?","Which of these can affect your ability to drive safely?"],o:[["शराब, ड्रग्स और कुछ दवाइयाँ भी","Alcohol, drugs and some medicines"],["सिर्फ़ शराब","Only alcohol"],["सिर्फ़ अवैध ड्रग्स","Only illegal drugs"],["कोई नहीं","None of them"]],a:0,e:["डॉक्टर की दी हुई कुछ दवाइयाँ भी नींद या सुस्ती ला सकती हैं। लेबल पढ़ें।","Some prescribed medicines can cause drowsiness too. Read the label."]},
+{t:"ख़तरे",te:"Hazards",q:["बाढ़ के पानी से भरी सड़क पर आपको क्या करना चाहिए?","What should you do about a road covered by floodwater?"],o:[["पानी की गहराई अनजान हो तो उसमें न जाएँ","Don't drive in if you don't know how deep it is"],["तेज़ी से निकल जाएँ","Drive through fast"],["पहले गियर में चलें","Use first gear"],["पीछे चलने वाले का पीछा करें","Follow the vehicle ahead"]],a:0,e:["गहराई अनजान हो तो पानी में न जाएँ; दूसरा रास्ता लें।","Never drive into floodwater of unknown depth; find another route."]},
+{t:"चिह्न",te:"Signs",q:["अष्टकोण (आठ कोनों वाला) लाल साइन क्या दर्शाता है?","What does an eight-sided (octagon) red sign mean?"],o:["STOP / रुकें","Give Way / रास्ता दें","No Parking / पार्किंग मना","Speed limit / गति सीमा"],a:0,e:["अष्टकोण वाला साइन हमेशा STOP होता है।","An octagon is always a STOP sign."]},
+{t:"ख़तरे",te:"Hazards",q:["बड़े ट्रक या बस के पीछे चलते समय आपको क्या ध्यान रखना चाहिए?","What should you remember when following a large truck or bus?"],o:[["अगर आपको उसके शीशे में ड्राइवर नहीं दिखता, तो उसे भी आप नहीं दिखते","If you can't see its mirrors, the driver can't see you"],["बहुत पास रहें","Stay very close"],["हमेशा ओवरटेक करें","Always overtake"],["हॉर्न बजाते रहें","Keep honking"]],a:0,e:["बड़े वाहनों के ब्लाइंड स्पॉट होते हैं; सुरक्षित दूरी रखें।","Large vehicles have big blind spots, so keep a safe distance."]},
+{t:"नियम",te:"Rules",q:["इनमें से किसे मोटरवे पर जाने की अनुमति नहीं है?","Who is not allowed on a motorway?"],o:[["पैदल यात्री","Pedestrians"],["कारें","Cars"],["ट्रक","Trucks"],["बसें","Buses"]],a:0,e:["मोटरवे पर पैदल चलना मना है।","Pedestrians are not allowed on motorways."]},
+{t:"सुरक्षा",te:"Safety",q:["बाइक/साइकिल चलाने वाले के लिए हेलमेट:","For cyclists, a helmet is:"],o:[["ज़रूरी है","Required by law"],["वैकल्पिक है","Optional"],["सिर्फ़ रात में ज़रूरी","Only at night"],["सिर्फ़ बच्चों के लिए","Only for children"]],a:0,e:["साइकिल सवारों के लिए मान्य हेलमेट पहनना क़ानूनन ज़रूरी है।","Cyclists must wear an approved helmet."]},
+{t:"नियम",te:"Rules",q:["बस लेन (bus lane) के बारे में सही क्या है?","What is correct about a bus lane?"],o:[["साइन में बताए समय पर आम गाड़ियाँ उसमें नहीं चल सकतीं","General traffic can't use it during the hours shown on signs"],["हर समय सबके लिए खुली","Open to everyone at all times"],["सिर्फ़ रात में बंद","Closed only at night"],["सिर्फ़ ट्रकों के लिए","Only for trucks"]],a:0,e:["बस लेन में निर्धारित समय पर सिर्फ़ अनुमत वाहन चलते हैं।","Only permitted vehicles may use it during the signed hours."]},
+{t:"ख़तरे",te:"Hazards",q:["अंधे मोड़ पर आपको कहाँ चलना चाहिए?","Where should you position your car on a blind corner?"],o:[["अपनी लेन में बाईं ओर","Towards the left of your lane"],["सड़क के बीच","In the middle of the road"],["दाईं ओर","Towards the right"],["जिधर आसान लगे","Wherever is easiest"]],a:0,e:["अंधे मोड़ पर बाईं ओर रहें और गति कम रखें।","Stay left and slow down on blind corners."]},
+{t:"सुरक्षा",te:"Safety",q:["थके होने पर सबसे अच्छा क्या करना है?","If you feel tired while driving, what is best?"],o:[["सुरक्षित जगह रुककर आराम करें","Stop in a safe place and rest"],["खिड़की खोलें और चलते रहें","Open the window and keep going"],["तेज़ संगीत लगाएँ","Turn the music up"],["कॉफ़ी पीकर गति बढ़ाएँ","Drink coffee and speed up"]],a:0,e:["सिर्फ़ आराम से थकान जाती है। रुककर झपकी लें।","Only rest fixes tiredness. Stop and take a nap."]},
+{t:"चिह्न",te:"Signs",q:["सड़क पर पीली घुमावदार तीर वाली चेतावनी का मतलब:","A yellow diamond sign with a curved arrow warns of:"],o:[["आगे घुमावदार मोड़","A curve ahead"],["पार्किंग","Parking ahead"],["रेस्टरूम","Toilets ahead"],["गति सीमा खत्म","End of speed limit"]],a:0,e:["यह साइन मोड़ के बारे में चेतावनी देता है; गति कम करें।","It warns of a bend; slow down."]}
+];
+
+/* ---------- App state ---------- */
+var PASS_RATIO=32/35;
+var L=["A","B","C","D"];
+var LANG="both";
+var S={view:"home",mode:null,qs:[],ans:[],orders:[],i:0,confirm:false,filter:"all",visited:{}};
+var app=document.getElementById("app");
+
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}return a}
+function pair(x){
+  if(typeof x==="string"){
+    if(/[ऀ-ॿ]/.test(x)&&x.indexOf(" / ")>-1){var p=x.split(" / ");return [p[0],p.slice(1).join(" / ")]}
+    return [x,x];
+  }
+  return x;
+}
+function html(hi,en){
+  if(LANG==="en")return en||hi;
+  if(LANG==="hi")return hi;
+  return hi+(en&&en!==hi?'<span class="en">'+en+'</span>':'');
+}
+function plain(hi,en){return LANG==="en"?(en||hi):hi}
+function tagText(q){return LANG==="en"?q.te:LANG==="hi"?q.t:q.t+" · "+q.te}
+function passMark(n){return Math.ceil(n*PASS_RATIO-1e-9)}
+
+function startQuiz(mode){
+  var pool=shuffle(BANK);
+  if(mode==="mock")pool=pool.slice(0,Math.min(35,pool.length));
+  S.mode=mode;S.qs=pool;S.ans=pool.map(function(){return null});
+  S.orders=pool.map(function(q){return shuffle(q.o.map(function(_,k){return k}))});
+  S.i=0;S.confirm=false;S.view="quiz";S.filter="all";S.visited={};
+  render();window.scrollTo(0,0);
+}
+
+function langBar(){
+  function b(l,t){return '<button class="btn" data-act="lang" data-l="'+l+'" aria-pressed="'+(LANG===l)+'">'+t+'</button>'}
+  return '<div class="tabs" role="group" aria-label="भाषा / Language">'+b("both","हिंदी + English")+b("hi","सिर्फ़ हिंदी")+b("en","English only")+'</div>';
+}
+
+function renderHome(){
+  var n=BANK.length,pm=passMark(35);
+  app.innerHTML=
+  '<div class="card hero"><div class="centerline" aria-hidden="true"></div>'+
+  '<h1>NZ ड्राइविंग थ्योरी टेस्ट अभ्यास</h1>'+
+  '<p class="sub">हिंदी में Road Code के सवाल। हर सवाल वैकल्पिक है, छोड़ सकते हैं। अंत में स्कोर और पास/फ़ेल की स्थिति दिखेगी।</p>'+
+  langBar()+'</div>'+
+  '<ul class="facts card"><li><b>'+n+'</b>सवाल का बैंक<span class="en">questions in the bank</span></li>'+
+  '<li><b>35</b>असली टेस्ट में सवाल<span class="en">questions in the real test</span></li>'+
+  '<li><b>'+pm+'/35</b>पास के लिए सही उत्तर<span class="en">correct answers to pass</span></li></ul>'+
+  '<div class="modes">'+
+  '<button class="mode" data-act="start" data-mode="mock"><strong>Mock Test · 35</strong><span>असली टेस्ट जैसा: 35 रैंडम सवाल, नतीजा अंत में।<span class="en">Real-test style: 35 random questions, results at the end.</span></span></button>'+
+  '<button class="mode" data-act="start" data-mode="practice"><strong>Practice · सभी '+n+'</strong><span>हर उत्तर के तुरंत बाद सही जवाब और कारण देखें।<span class="en">See the correct answer and reason right after each answer.</span></span></button>'+
+  '</div>'+
+  '<p class="note">यह अनौपचारिक अभ्यास है और NZTA से जुड़ा नहीं है। असली टेस्ट अंग्रेज़ी में होता है, इसलिए अंग्रेज़ी शब्द भी पढ़ते रहें। नियम बदल सकते हैं, इसलिए NZTA की आधिकारिक Road Code (nzta.govt.nz) से मिलान करें।<span class="en">This is unofficial practice and not affiliated with NZTA. The real test is in English. Rules can change, so check the official Road Code at nzta.govt.nz.</span></p>';
+}
+
+function renderQuiz(){
+  var q=S.qs[S.i],order=S.orders[S.i],a=S.ans[S.i],n=S.qs.length;
+  var practice=S.mode==="practice",locked=practice&&a!==null;
+  var answered=S.ans.filter(function(x){return x!==null}).length;
+  var strip='<div class="strip" aria-hidden="true">'+S.qs.map(function(_,k){return '<i class="'+(k===S.i?"cur":S.ans[k]!==null?"done":"")+'"></i>'}).join("")+'</div>';
+  var opts=order.map(function(k,pos){
+    var p=pair(q.o[k]),cls="opt";
+    if(locked){ if(k===q.a)cls+=" ok"; else if(k===a)cls+=" no"; }
+    else if(a===k)cls+=" sel";
+    return '<li><button class="'+cls+'" data-act="pick" data-k="'+k+'" '+(locked?"disabled":"")+' aria-pressed="'+(a===k)+'"><span class="k">'+L[pos]+'</span><span>'+html(p[0],p[1])+'</span></button></li>';
+  }).join("");
+  var expl="";
+  if(locked){
+    var good=a===q.a;
+    expl='<div class="expl"><strong>'+(good?"सही उत्तर":"ग़लत उत्तर")+' <span class="en" style="display:inline">'+(good?"Correct":"Not quite")+'</span></strong><br>'+html(q.e[0],q.e[1])+'</div>';
+  }
+  var grid=S.qs.map(function(_,k){
+    var c="gb";if(S.ans[k]!==null)c+=" ans";else if(S.visited[k])c+=" skip";if(k===S.i)c+=" cur";
+    return '<button class="'+c+'" data-act="go" data-i="'+k+'" aria-label="सवाल '+(k+1)+'">'+(k+1)+'</button>';
+  }).join("");
+  var last=S.i===n-1;
+  var confirm="";
+  if(S.confirm){
+    var left=n-answered;
+    confirm='<div class="confirm" role="alert"><div>'+(left>0?'आपने <b>'+left+'</b> सवाल छोड़े हैं। उन्हें बिना जवाब वाला गिना जाएगा।<span class="en">You skipped '+left+' question'+(left>1?'s':'')+'. They count as not answered.</span>':'सभी सवालों के जवाब दिए जा चुके हैं।<span class="en">All questions answered.</span>')+'</div><div class="row"><button class="btn primary" data-act="finish">नतीजा देखें / See results</button><button class="btn" data-act="back">वापस जाएँ / Keep going</button></div></div>';
+  }
+  app.innerHTML=
+  langBar()+strip+
+  '<div class="card" style="display:flex;flex-direction:column;gap:16px">'+
+  '<div class="qmeta"><span>सवाल '+(S.i+1)+' / '+n+'</span><span class="tag">'+tagText(q)+'</span></div>'+
+  '<p class="q">'+html(q.q[0],q.q[1])+'</p>'+
+  '<ul class="opts">'+opts+'</ul>'+expl+
+  '<div class="nav"><button class="btn" data-act="prev" '+(S.i===0?"disabled":"")+'>← पिछला</button>'+
+  '<div class="row">'+(a!==null&&!practice?'<button class="btn" data-act="clear">उत्तर हटाएँ</button>':"")+
+  (last?'<button class="btn primary" data-act="ask">जाँचें / Finish</button>':'<button class="btn '+(a!==null?"primary":"")+'" data-act="next">'+(a!==null?"आगे / Next →":"छोड़ें / Skip →")+'</button>')+'</div></div></div>'+
+  confirm+
+  '<div class="card" style="display:flex;flex-direction:column;gap:10px"><div class="grid">'+grid+'</div>'+
+  '<div class="legend"><span>भरा = उत्तर दिया</span><span>बिंदीदार = छोड़ा</span><span>पीला घेरा = अभी यहाँ</span></div>'+
+  '<div class="row"><button class="btn" data-act="ask">अभी जाँचें / Finish now ('+answered+'/'+n+')</button></div></div>';
+}
+
+function results(){
+  var n=S.qs.length,c=0,w=0,sk=0,topics={};
+  S.qs.forEach(function(q,i){
+    var t=topics[q.t]||(topics[q.t]={te:q.te,c:0,n:0});t.n++;
+    if(S.ans[i]===null)sk++;else if(S.ans[i]===q.a){c++;t.c++}else w++;
+  });
+  var pm=passMark(n);
+  return {n:n,c:c,w:w,sk:sk,pm:pm,pass:c>=pm,topics:topics};
+}
+
+function renderResults(){
+  var r=results();
+  var tp=Object.keys(r.topics).map(function(k){var t=r.topics[k],p=Math.round(100*t.c/t.n);
+    return '<div class="tp"><span>'+(LANG==="en"?t.te:LANG==="hi"?k:k+' · '+t.te)+'</span><div class="bar"><i style="width:'+p+'%"></i></div><span>'+t.c+'/'+t.n+'</span></div>'}).join("");
+  var items=[];
+  S.qs.forEach(function(q,i){
+    var a=S.ans[i],st=a===null?"s":(a===q.a?"r":"w");
+    if(S.filter==="wrong"&&st==="r")return;
+    var yp=a===null?null:pair(q.o[a]),cp=pair(q.o[q.a]);
+    var yours=a===null?'आपने छोड़ा <span class="en" style="display:inline">/ Skipped</span>':'आपका उत्तर: <span class="you">'+plain(yp[0],yp[1])+'</span>';
+    items.push('<div class="ri"><span class="st '+(st==="r"?"":st)+'" style="'+(st==="r"?"color:var(--good)":"")+'">'+(st==="r"?"✔ सही":st==="w"?"✘ ग़लत":"– छोड़ा")+' · सवाल '+(i+1)+'</span>'+
+      '<p><b>'+html(q.q[0],q.q[1])+'</b></p>'+
+      '<p>'+yours+'</p><p>सही उत्तर: <span class="right"><b>'+plain(cp[0],cp[1])+'</b></span></p>'+
+      '<div class="expl">'+html(q.e[0],q.e[1])+'</div></div>');
+  });
+  app.innerHTML=
+  langBar()+
+  '<div class="card verdict"><div class="centerline" aria-hidden="true"></div>'+
+  '<span class="stamp '+(r.pass?"pass":"fail")+'">'+(r.pass?"PASS · पास":"NOT YET · अभी पास नहीं")+'</span>'+
+  '<div class="score">'+r.c+'<small> / '+r.n+'</small></div>'+
+  '<p style="margin:0">'+(r.pass?'बधाई! पास के लिए '+r.pm+' सही उत्तर चाहिए थे।':'पास के लिए '+r.pm+' सही उत्तर चाहिए। अभी '+(r.pm-r.c)+' और सही चाहिए थे।')+
+  '<span class="en">Pass mark for this set: '+r.pm+' of '+r.n+' (same ratio as 32 of 35 in the real test).</span></p>'+
+  '<div class="stats"><div><b style="color:var(--good)">'+r.c+'</b>सही<span class="en">Correct</span></div><div><b style="color:var(--bad)">'+r.w+'</b>ग़लत<span class="en">Wrong</span></div><div><b>'+r.sk+'</b>छोड़े<span class="en">Skipped</span></div></div>'+
+  '<div class="row"><button class="btn primary" data-act="start" data-mode="'+S.mode+'">फिर से करें / Try again</button><button class="btn" data-act="home">मुख्य पेज</button></div></div>'+
+  '<div class="card topics"><h2>विषय के अनुसार</h2>'+tp+'</div>'+
+  '<div class="card rev"><h2>उत्तरों की समीक्षा</h2>'+
+  '<div class="tabs"><button class="btn" data-act="filter" data-f="all" aria-pressed="'+(S.filter==="all")+'">सभी / All</button><button class="btn" data-act="filter" data-f="wrong" aria-pressed="'+(S.filter==="wrong")+'">ग़लत और छोड़े / Wrong &amp; skipped</button></div>'+
+  (items.length?items.join(""):'<p>कोई ग़लती नहीं। शानदार!</p>')+'</div>';
+}
+
+function render(){
+  if(S.view==="home")renderHome();else if(S.view==="quiz")renderQuiz();else renderResults();
+}
+
+function mark(i){S.visited[i]=true}
+
+app.addEventListener("click",function(e){
+  var b=e.target.closest("[data-act]");if(!b)return;
+  var act=b.getAttribute("data-act");
+  if(act==="lang"){LANG=b.getAttribute("data-l");render();return}
+  if(act==="start"){startQuiz(b.getAttribute("data-mode"));return}
+  if(act==="home"){S.view="home";render();window.scrollTo(0,0);return}
+  if(act==="filter"){S.filter=b.getAttribute("data-f");render();return}
+  if(act==="pick"){
+    var k=+b.getAttribute("data-k");
+    if(S.mode==="practice"&&S.ans[S.i]!==null)return;
+    S.ans[S.i]=(S.mode==="mock"&&S.ans[S.i]===k)?null:k;S.confirm=false;render();return;
+  }
+  if(act==="clear"){S.ans[S.i]=null;render();return}
+  if(act==="next"){mark(S.i);if(S.i<S.qs.length-1)S.i++;S.confirm=false;render();window.scrollTo(0,0);return}
+  if(act==="prev"){mark(S.i);if(S.i>0)S.i--;S.confirm=false;render();window.scrollTo(0,0);return}
+  if(act==="go"){mark(S.i);S.i=+b.getAttribute("data-i");S.confirm=false;render();window.scrollTo(0,0);return}
+  if(act==="ask"){mark(S.i);S.confirm=true;render();var c=document.querySelector(".confirm");if(c)c.scrollIntoView({block:"center"});return}
+  if(act==="back"){S.confirm=false;render();return}
+  if(act==="finish"){S.view="results";S.filter="all";render();window.scrollTo(0,0);return}
+});
+render();
+</script>
+
+</body>
+</html>
